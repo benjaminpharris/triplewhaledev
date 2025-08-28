@@ -1,5 +1,8 @@
 import os
 
+from dotenv import load_dotenv
+load_dotenv()
+
 # --- Secrets (set in GitHub Actions + local .env) ---
 TW_API_KEY = os.getenv("TW_API_KEY")  # required
 TW_BASE = os.getenv("TW_BASE", "https://api.triplewhale.com/api/v2")

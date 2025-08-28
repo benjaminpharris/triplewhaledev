@@ -38,13 +38,13 @@ def normalize(df: pd.DataFrame) -> pd.DataFrame:
     out["email"] = out.get("email", pd.Series([None]*len(out))).apply(clean_email)
 
     # revenue numeric
-    out["order_revenue"] = pd.to_numeric(out.get("order_revenue"), errors="coerce")
+    out["order_revenue"] = pd.to_numeric(out.get("order_revenue", pd.Series([np.nan]*len(out))), errors="coerce")
 
     # currency
     out["currency"] = DEFAULT_CURRENCY
 
     # created_at: local → UTC ISO Z
-    out["created_at_utc"] = to_iso_utc_from_local(out.get("created_at_local"))
+    out["created_at_utc"] = to_iso_utc_from_local(out.get("created_at", pd.Series([None]*len(out))))
 
     return out
 
@@ -54,9 +54,9 @@ def validate_rowwise(df: pd.DataFrame) -> pd.DataFrame:
     Accept: (customer_id OR email) AND required order fields.
     """
     out = df.copy()
-    out["has_min_customer"] = (~out.get("customer_id").isna()) | (~out.get("email").isna())
+    out["has_min_customer"] = (~out.get("customer_id", pd.Series([None]*len(out))).isna()) | (~out.get("email", pd.Series([None]*len(out))).isna())
     for c in REQUIRED_FOR_ORDER:
-        out[f"has_{c}"] = ~out.get(c).isna()
+        out[f"has_{c}"] = ~out.get(c, pd.Series([None]*len(out))).isna()
     needed_flags = [f"has_{c}" for c in REQUIRED_FOR_ORDER] + ["has_min_customer"]
     out["is_valid"] = out[needed_flags].all(axis=1)
     return out

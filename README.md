@@ -38,7 +38,7 @@ conda env create -f environment.yml
 cp .env.example .env
 # fill in TW_API_KEY and SNOWFLAKE_USER
 
-# 3) run a dry-run (no API calls)
+# 3) run a dry-run (no API calls - Not necessary unless testing in prod)
 DRY_RUN=true python -m tw_ingest.run_daily
 
 # 4) inspect outputs
@@ -52,5 +52,8 @@ cat logs/tw_order_upload_log.csv
 
 This repository modularizes the data extraction, processing, and upload steps necessary to provide core data to TripleWhale's platform.
 
-1. **daily_send.py** - The main script that calls submodules automatically via Github Actions
-2. 
+1. **Master.py** / **Master.ipynb** - The main script that calls submodules. Each submodule performs a specific function in the data processing pipeline
+2.  *snowflake_extract_1* - Calls "DISH_RETAIL_DL.ORDER_ORCHESTRATION.CUSTOMERORDER_PARSE" to gather orders tracked in Snowflake
+3.  *normalize_2* - Sanitizes fields from the orders table
+4.  *group_payloads_3* - Collapses order data on order ID. This means each row is one order id 
+5.  *send_triplewhale_4* - Sends data to the Triplewhale API and captures logs in case of upload failure

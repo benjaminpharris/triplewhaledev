@@ -41,6 +41,7 @@ def extract_orders(session: Session) -> pd.DataFrame:
     ).to_pandas()
 
     df["extracted_at_utc"] = pd.Timestamp.utcnow()
+    df.columns = [c.lower() for c in df.columns]
     return df
 
 def cache_frame(df: pd.DataFrame, name_prefix="orders_line_items"):

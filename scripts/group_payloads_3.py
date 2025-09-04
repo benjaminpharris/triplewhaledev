@@ -1,5 +1,5 @@
 import pandas as pd
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Iterable
 
 def rows_to_payloads(df_valid: pd.DataFrame) -> list[Dict[str, Any]]:
     """

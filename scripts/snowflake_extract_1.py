@@ -19,7 +19,7 @@ def extract_orders(session: Session) -> pd.DataFrame:
         (col('ORDR_STATUS').isin('complete', 'inProgress')) &
         (col('OO_CREATEDDT_MT') >= dateadd('day', lit(-8), current_date()))
     ).select(
-        when(col('CHANNEL') == 'E-COMMERCE', 'boostmobile.com')
+        when(col('CHANNEL') == 'E-COMMERCE', 'www.boostmobile.com')
         .otherwise('offline')
         .alias('shop'),
 
@@ -27,7 +27,7 @@ def extract_orders(session: Session) -> pd.DataFrame:
 
         col('ORDER_NBR').alias('order_id'),
         col('OO_CREATEDDT_MT').alias('created_at'),
-        col('MONTHLYTOTAL').alias('order_revenue'),
+        (col('MONTHLYTOTAL') + col('ITEM_COST')).alias('order_revenue'),
         col('subscriptionuuid').alias('customer_id'),
         col('BILLTOCONTACTEMAIL').alias('email'),
         col('BILLTOCONTACTPHONE').alias('customer_phone'),

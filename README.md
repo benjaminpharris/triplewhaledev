@@ -1,10 +1,16 @@
 # Triple Whale Order Ingest (Snowflake → TW Data-In)
 
 ## What this does (plain English)
-- Pulls recent e-comm orders + line items from Snowflake (read-only via Snowpark).
+
+### Locally
+- Pulls previous 8 days e-comm orders + line items from Snowflake (read-only via Snowpark).
+  - DISH_RETAIL_DL.ORDER_ORCHESTRATION.CUSTOMERORDER_PARSE
 - Cleans/validates fields (email, currency, timestamps).
 - Groups line items by `order_id` into ONE payload per order (prevents revenue double-count).
-- Optionally **dry-runs** to inspect payloads without sending.
+  - Creates a separate set of sub-items for incomplete orderers tagged as *refunds* 
+
+### In Google Collab (or another cloud notebook service)
+> Currently at *https://colab.research.google.com/drive/1vNnclUTEUt-SlU81cAeCB9FahVFDMEhH#scrollTo=XpjeaGOAwPhE*
 - Sends orders to Triple Whale’s Data-In **Create Order Record** endpoint with retries.
 - Logs successes/failures to a CSV for idempotent re-runs.
 
@@ -17,13 +23,12 @@
 - `order_revenue`: numeric (order-level)
 - `line_items[]`: each with `{ id, product_name, variant_name, price, quantity, variant_id, sku }`
 
+### The complete data dictionary can be found at:
+https://docs.google.com/spreadsheets/d/1dfz5_InxLi96-dBxHJzOODV_T_XzBGDPuqzqqKDpQ18/edit?gid=1808364879#gid=1808364879
+
 ## Data sources (Snowflake)
 - Table: `DISH_RETAIL_DL.ORDER_ORCHESTRATION.CUSTOMERORDER_PARSE`
 - Filter: e-comm only, `BASETYPE in ('PLAN','DEVICE')`, status in (`complete`,`inProgress`), last `DAYS_BACK` by `OO_CREATEDDT_MT` (Mountain Time)
-
-## Project layout
-
----
 
 
 # Quick start Guide
@@ -52,8 +57,8 @@ cat logs/tw_order_upload_log.csv
 
 This repository modularizes the data extraction, processing, and upload steps necessary to provide core data to TripleWhale's platform.
 
-1. **Master.py** / **Master.ipynb** - The main script that calls submodules. Each submodule performs a specific function in the data processing pipeline
+1. **Master.ipynb** - The main script that calls submodules. Each submodule performs a specific function in the data processing pipeline
 2.  *snowflake_extract_1* - Calls "DISH_RETAIL_DL.ORDER_ORCHESTRATION.CUSTOMERORDER_PARSE" to gather orders tracked in Snowflake
 3.  *normalize_2* - Sanitizes fields from the orders table
 4.  *group_payloads_3* - Collapses order data on order ID. This means each row is one order id 
-5.  *send_triplewhale_4* - Sends data to the Triplewhale API and captures logs in case of upload failure
+5.**-In Google Collab-**  *send_triplewhale_4* - Sends data to the Triplewhale API and captures logs in case of upload failure

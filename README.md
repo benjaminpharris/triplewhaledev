@@ -42,14 +42,13 @@ conda env create -f environment.yml
 # 2) copy and edit env - these contain the connection parameters and login information nedded 
 cp .env.example .env
 # fill in TW_API_KEY and SNOWFLAKE_USER
-
-# 3) run a dry-run (no API calls - Not necessary unless testing in prod)
-DRY_RUN=true python -m tw_ingest.run_daily
-
-# 4) inspect outputs
-ls ./data/cache/     # parquet extracts
-cat logs/tw_order_upload_log.csv
 ```
+
+## Folder Structure
+
+1. Create a synced Google Drive folder locally
+2. Point the dataframe created by validate_rowwise() _second to last block in Master.ipynb_ to save to that folder
+3. Connect that folder to the Google Collab notebook and point the _val_successes_ and _val_cancellations_ to the success and cancellations parquet files
 
 ---
 

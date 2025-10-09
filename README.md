@@ -4,7 +4,7 @@
 
 ### Locally
 - Pulls previous 8 days e-comm orders + line items from Snowflake (read-only via Snowpark).
-  - DISH_RETAIL_DL.ORDER_ORCHESTRATION.CUSTOMERORDER_PARSE
+  - `DISH_RETAIL_DL.ORDER_ORCHESTRATION.CUSTOMERORDER_PARSE`
 - Cleans/validates fields (email, currency, timestamps).
 - Groups line items by `order_id` into ONE payload per order (prevents revenue double-count).
   - Creates a separate set of sub-items for incomplete orderers tagged as *refunds* 
@@ -23,8 +23,8 @@
 - `order_revenue`: numeric (order-level)
 - `line_items[]`: each with `{ id, product_name, variant_name, price, quantity, variant_id, sku }`
 
-### The complete data dictionary can be found at:
-https://docs.google.com/spreadsheets/d/1dfz5_InxLi96-dBxHJzOODV_T_XzBGDPuqzqqKDpQ18/edit?gid=1808364879#gid=1808364879
+### Data Dictionary:
+> https://docs.google.com/spreadsheets/d/1dfz5_InxLi96-dBxHJzOODV_T_XzBGDPuqzqqKDpQ18/edit?gid=1808364879#gid=1808364879
 
 ## Data sources (Snowflake)
 - Table: `DISH_RETAIL_DL.ORDER_ORCHESTRATION.CUSTOMERORDER_PARSE`
